@@ -850,11 +850,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\User\\Desktop\\biblioteca\\Biblioteca\\Biblioteca.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Desktop\\Biblioteca\\Biblioteca.csproj",
       "projectName": "Biblioteca",
-      "projectPath": "C:\\Users\\User\\Desktop\\biblioteca\\Biblioteca\\Biblioteca.csproj",
+      "projectPath": "C:\\Users\\User\\Desktop\\Biblioteca\\Biblioteca.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\User\\Desktop\\biblioteca\\Biblioteca\\obj\\",
+      "outputPath": "C:\\Users\\User\\Desktop\\Biblioteca\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
