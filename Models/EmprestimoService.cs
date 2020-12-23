@@ -6,35 +6,72 @@ namespace Biblioteca.Models
 {
     public class EmprestimoService 
     {
-        public void Inserir(Emprestimo e)
+        public bool Inserir(Emprestimo e)
         {
-            using(BibliotecaContext bc = new BibliotecaContext())
-            {
-                bc.Emprestimos.Add(e);
-                bc.SaveChanges();
+            if(validate_emprestimo(e)){
+                using(BibliotecaContext bc = new BibliotecaContext())
+                {
+                    bc.Emprestimos.Add(e);
+                    bc.SaveChanges();
+                    return true;
+                }
             }
+            return false;
         }
 
-        public void Atualizar(Emprestimo e)
+        public bool Atualizar(Emprestimo e)
         {
-            using(BibliotecaContext bc = new BibliotecaContext())
-            {
-                Emprestimo emprestimo = bc.Emprestimos.Find(e.Id);
-                emprestimo.NomeUsuario = e.NomeUsuario;
-                emprestimo.Telefone = e.Telefone;
-                emprestimo.LivroId = e.LivroId;
-                emprestimo.DataEmprestimo = e.DataEmprestimo;
-                emprestimo.DataDevolucao = e.DataDevolucao;
+            if(validate_emprestimo(e)){
+                using(BibliotecaContext bc = new BibliotecaContext())
+                {
+                    try{
+                        Emprestimo emprestimo = bc.Emprestimos.Find(e.Id);
+                        emprestimo.NomeUsuario = e.NomeUsuario;
+                        emprestimo.Telefone = e.Telefone;
+                        emprestimo.LivroId = e.LivroId;
+                        emprestimo.DataEmprestimo = e.DataEmprestimo;
+                        emprestimo.DataDevolucao = e.DataDevolucao;
+                        emprestimo.Devolvido = e.Devolvido;
 
-                bc.SaveChanges();
+                        bc.SaveChanges();
+                        return true;
+                    }catch{
+                        return false;
+                    }
+                }
             }
+            return false;
         }
 
-        public ICollection<Emprestimo> ListarTodos(FiltrosEmprestimos filtro)
+        public List<Emprestimo> ListarTodos(FiltrosEmprestimos filtro)
         {
             using(BibliotecaContext bc = new BibliotecaContext())
             {
-                return bc.Emprestimos.Include(e => e.Livro).ToList();
+                List<Emprestimo> query;
+                
+                if(filtro != null)
+                {
+                    switch(filtro.TipoFiltro)
+                    {
+                        case "Usuario":
+                            query = bc.Emprestimos.Where(e => e.NomeUsuario.ToLower().Contains(filtro.Filtro.ToLower())).OrderByDescending(e => e.DataDevolucao).Include(e => e.Livro).ToList();
+                        break;
+
+                        case "Livro":
+                            query = bc.Emprestimos.Where(e => e.Livro.Titulo.ToLower().Contains(filtro.Filtro.ToLower())).OrderByDescending(e => e.DataDevolucao).Include(e => e.Livro).ToList();
+                        break;
+
+                        default:
+                            query = bc.Emprestimos.Include(e => e.Livro).ToList();
+                        break;
+                    }
+                }
+                else
+                {
+                    query = bc.Emprestimos.Include(e => e.Livro).ToList();
+                }
+                
+                return query.OrderBy(e => e.Id).Reverse().OrderBy(e => e.Devolvido).ToList();
             }
         }
 
@@ -45,5 +82,10 @@ namespace Biblioteca.Models
                 return bc.Emprestimos.Find(id);
             }
         }
+
+        private bool validate_emprestimo(Emprestimo e){
+            return (!string.IsNullOrEmpty(e.NomeUsuario) && !string.IsNullOrEmpty(e.Telefone));
+        }
+
     }
 }
